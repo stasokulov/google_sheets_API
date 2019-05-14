@@ -1,22 +1,15 @@
 'use strict'
 const menu = document.querySelector('.menu');
 
-//При загрузке страницы
-/*
-window.onload = () => {
-    firstCreateMenu();
-};
-*/
-
-function firstCreateMenu(data) {
+function firstCreateMenu(base) {
     //Заполняем меню пунктами из базы данных
-    createMenu(menu, data, 'vis');
+    createMenu(menu, base, 'vis');
     //Вешаем слушатель кликов на меню
     menu.addEventListener( 'click', openMenu );
 };
 
 //Заполняем блок элементами базы данных
-function createMenu(parent, data, visible) {
+function createMenu(parent, base, visible) {
     //Создаем обертку для пунктов меню
     const wrap = createDiv();
     wrap.classList.add(visible);
@@ -24,24 +17,29 @@ function createMenu(parent, data, visible) {
     //Создаем шапку подменю
     const heder = createDiv();
     heder.classList.add('menu__title');
-    heder.innerText = data.name;
+    heder.innerText = base.name;
     wrap.appendChild(heder);
     //Создаем шаблон пункта меню
     const templateMenuItem = createDiv();
     templateMenuItem.classList.add('menu__item');
+
     //Создаем пункты меню из элементов базы данных
-     data.items.forEach(element => {
+    base.items.forEach(element => {
         let newMenuItem = templateMenuItem.cloneNode(true);
         newMenuItem.innerText = element.name;
-        //Если у элемента массива есть свой подмассив элементов, то наполняем пункт меню пунктами подменю, рекурсивно вызывая эту же функцию.
+
+        //Если у элемента массива есть свой подмассив элементов, то наполняем пункт меню пунктами подменю,
+        //рекурсивно вызывая эту же функцию.
         if (element.items) {
             createMenu(newMenuItem, element, 'invis');
+
         //Если элемент содержит ссылки на контент, то записываем их в пункт меню
         } else if (element.content) {
             const div = createDiv();
             div.classList.add('invis');
             div.classList.add('content');
-            div.innerText = element.content;//Отсюда будем брать id контента при клике на пункт меню
+            //div.innerText = element.content;//Отсюда будем брать id контента при клике на пункт меню
+            div.innerHTML = element.content;
             newMenuItem.appendChild(div);
         };
         wrap.appendChild(newMenuItem);
@@ -74,11 +72,18 @@ function openMenu(event) {
         //Если в пункте ссылки на контент
         } else if ( child.classList.contains('content') ) {
             //Берем id контента из кликнутого пункта меню
-            const idContent = '#' + child.innerText;
+            //const idContent = '#' + child.innerText;
             //Ищем контент в базе контента по id
-            const contentElement = document.querySelector([idContent]).cloneNode(true);
+            //const contentElement = document.querySelector([idContent]).cloneNode(true);
             //Вставляем контент в область вывода
-            output.appendChild(contentElement);
+            //output.appendChild(contentElement);
+
+            
+            const content = child.cloneNode(true).firstChild;
+            content.classList.add('frame');
+            console.log(output);
+            console.log(content);
+            output.appendChild(content);
         };
     };
 };

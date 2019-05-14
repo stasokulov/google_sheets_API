@@ -76,3 +76,8 @@ a {
     color: #22a053;
     font-weight: bold;
 }
+
+.frame {
+    width: 100%;
+    height: 100%;
+}
