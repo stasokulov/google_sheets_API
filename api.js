@@ -13,8 +13,8 @@ const resultBase = {
 };
 
 //Ссылки на гугл-таблицы с данными.
-const linkToGoogleSheetLibrary = 'https://script.google.com/macros/s/AKfycbzFTZTdYPzgd-UZ3S7933FRzzkJtasfSYUPDKvqQnDZdxk9tQMQ/exec';
-const linkToGoogleSheetConstructor = 'https://script.google.com/macros/s/AKfycbzX6KRUeNuRd6_2BYLDdLr7N2npznJJ8pOtM3AperetKqGm8wkW/exec';
+const linkToGoogleSheetLibrary = 'https://script.google.com/macros/s/AKfycbxk9i7cIGY9zk6tR2XFx1B6vhhs-z8Iz2xk6_SPYf2XfvcQXOg/exec';
+const linkToGoogleSheetConstructor = 'https://script.google.com/macros/s/AKfycby1TCjV8JsNfKTUh3LXgjLy0pYQYuP0MY1nA9VpPQ/exec';
 
 //Запрашиваю параллельно данные из гугл-таблицы.
 Promise.all([
@@ -22,6 +22,7 @@ Promise.all([
     fetch(linkToGoogleSheetConstructor),
 ])
 .then(results => {
+    console.log(results);
     //Запускаю обработку данных первой таблицы для наполнения библиотеки.
     request(results[0], library, results);
 })
