@@ -22,7 +22,6 @@ function createMenu(parent, base, visible) {
     //Создаем шаблон пункта меню
     const templateMenuItem = createDiv();
     templateMenuItem.classList.add('menu__item');
-
     //Создаем пункты меню из элементов базы данных
     base.items.forEach(element => {
         let newMenuItem = templateMenuItem.cloneNode(true);
@@ -33,13 +32,12 @@ function createMenu(parent, base, visible) {
         if (element.items) {
             createMenu(newMenuItem, element, 'invis');
 
-        //Если элемент содержит ссылки на контент, то записываем их в пункт меню
+        //Если элемент содержит ссылки на контент, то записываем их как дата-аттрибут.
         } else if (element.content) {
             const div = createDiv();
             div.classList.add('invis');
             div.classList.add('content');
-            //div.innerText = element.content;//Отсюда будем брать id контента при клике на пункт меню
-            div.innerHTML = element.content;
+            div.dataset.content = element.content;
             newMenuItem.appendChild(div);
         };
         wrap.appendChild(newMenuItem);
@@ -69,20 +67,14 @@ function openMenu(event) {
         const subItems = child.cloneNode(true);
         subItems.classList.remove('invis');
         parent.lastElementChild.appendChild(subItems);
-        //Если в пункте ссылки на контент
+        //Если в пункте ссылки на контент, то создаем iframe и вставляем в правую часть навигатора.
         } else if ( child.classList.contains('content') ) {
-            //Берем id контента из кликнутого пункта меню
-            //const idContent = '#' + child.innerText;
-            //Ищем контент в базе контента по id
-            //const contentElement = document.querySelector([idContent]).cloneNode(true);
-            //Вставляем контент в область вывода
-            //output.appendChild(contentElement);
-
-            
-            const content = child.cloneNode(true).firstChild;
+            const content = document.createElement('iframe');
+            //Ссылку для фрейма берем из дата-атрибута. embedded=true убрает служебные слова.
+            content.setAttribute('src', child.dataset.content + '?embedded=true');
             content.classList.add('frame');
-            console.log(output);
-            console.log(content);
+            content.setAttribute('frameborder', 0); //Этот аттрибут убирает некрасивую рамку вокруг iframe.
+            content.setAttribute('seamless', '');
             output.appendChild(content);
         };
     };
