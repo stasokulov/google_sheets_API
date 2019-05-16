@@ -19,6 +19,11 @@
 			Навигатор
 		</div>
 
+		<!--Прелоадер начальной загрузки-->
+		<div class="preloader__wrap_main">
+			<img src="img/spinner.svg" class="preloader"></img>
+		</div>
+
 		<!--Главное меню-->
 		<div class="menu">
 			<!--
@@ -33,8 +38,15 @@
 
 		<!--Правая часть файла для вывода содержимого пунктов-->
 		<div id="output">
-			
+			<!--Прелоадер загрузки текстов-->
+			<div class="preloader__wrap_output invis">
+				<img src="img/spinner.svg" class="preloader"></img>
+			</div>	
+
+			<div id="output__inner">
+			</div>
 		</div>
+
 
 		<script src="main.js"></script>
 		<script src="api.js"></script>

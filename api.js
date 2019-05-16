@@ -38,7 +38,9 @@ function request(data, obj, results) {
         }
     })
     .then(json => {
-        const arrOfArrsWithHoles = [...json.result]; //Получаю массив подмассивов. Каждый подмассив - строка в таблице. Пустые значения - пустые ячейки.
+        //Получаю массив подмассивов. Каждый подмассив - строка в таблице. Пустые значения - пустые ячейки.
+        //const arrOfArrsWithHoles = [...json.result]; 
+        const arrOfArrsWithHoles = Array.from(json.result); 
         //Выбрасываю пустые значения из подмассивов, возвращаю массив подмассивов без дырок.
         const arrOfArrs = arrOfArrsWithHoles.map( arrWithHoles => {
             //Фильтрую только элементы, возвращающие true (т.е. не пустые).
@@ -60,9 +62,11 @@ function request(data, obj, results) {
         if (obj.name === 'Библиотека') {
             request(results[1], constructor);
         //Если нет, значит обработался и конструктор. Теперь и библиотека и конструктор готовы.
-        //Запускаю построение меню.
         } else {
-            //firstCreateMenu(library);
+            //Прячем прелоадер.
+            const preloaderMain = document.querySelector('.preloader__wrap_main');
+            preloaderMain.classList.add('invis');
+            //Запускаю построение меню.
             createResultBase()
         };                
     })
@@ -91,7 +95,7 @@ function createResultBase() {
 
 function createDataBase(objOfArrs, obj) {
     //Преобразую объект в массив, чтобы использовать методы массива для обработки.
-    const arrOfArrs = [...objOfArrs];
+    const arrOfArrs = Array.from(objOfArrs);
     //Запускаю каждый подмассив на проверку первого элемента подмассива.
     arrOfArrs.forEach(arr => {
         check(obj, arr, 0);

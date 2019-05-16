@@ -1,5 +1,7 @@
 'use strict'
+console.log('fyghjnkml');
 const menu = document.querySelector('.menu');
+const preloaderOutput = document.querySelector('.preloader__wrap_output');
 
 function firstCreateMenu(base) {
     //Заполняем меню пунктами из базы данных
@@ -54,7 +56,7 @@ function openMenu(event) {
     if ( block.classList.contains('menu__item') ) {
         const parent = block.parentNode;
         const child = block.lastElementChild;
-        const output = document.querySelector('#output');
+        const output = document.querySelector('#output__inner');
         //Очищаем область вывода
         output.innerHTML = '';
         //Удаляем нижележащее дерево меню, отображенное ранее
@@ -73,11 +75,29 @@ function openMenu(event) {
             //Ссылку для фрейма берем из дата-атрибута. embedded=true убрает служебные слова.
             content.setAttribute('src', child.dataset.content + '?embedded=true');
             content.classList.add('frame');
+            content.classList.add('invis'); //Невидимость уберем после прогрузки фрейма.
             content.setAttribute('frameborder', 0); //Этот аттрибут убирает некрасивую рамку вокруг iframe.
-            content.setAttribute('seamless', '');
             output.appendChild(content);
+            preloaderOutput.classList.remove('invis'); //Запускаем прелоадер.
+            checkIframe(content); //Проверяем прогрузку фрейма.
         };
     };
+};
+
+function checkIframe(content) {
+    //Каждые 100 миллисекунд проверяем фрейм.
+    //Когда поймаем ошибку - значит подгрузились данные со стороннего сервера и доступ к фрейму теперь закрыт.
+    const checkIframe = setInterval( () => {
+        try {
+            console.log('try');
+            return content.contentWindow.document;
+        } catch {
+            console.log('Поймал ошибку');
+            clearInterval(checkIframe); //Останавливаем setInterval.
+            preloaderOutput.classList.add('invis'); //Скрываем преловдер.
+            content.classList.remove('invis'); //Делаем фрейм видимым.
+        };
+    }, 10 );
 };
 
 function toHiglight(block) {
@@ -89,6 +109,9 @@ function toHiglight(block) {
     //Выделяем кликнутый пункт
     block.classList.toggle('active');
 };
+
+
+
 
 function createDiv() {
     const div = document.createElement('div');
