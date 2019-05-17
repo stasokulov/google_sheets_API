@@ -1,17 +1,15 @@
-'use strict'
-console.log('fyghjnkml');
-const menu = document.querySelector('.menu');
 const preloaderOutput = document.querySelector('.preloader__wrap_output');
 
-function firstCreateMenu(base) {
+function createMenu(base) {
+    const menu = document.querySelector('.menu');
     //Заполняем меню пунктами из базы данных
-    createMenu(menu, base, 'vis');
+    createBranchMenu(menu, base, 'vis');
     //Вешаем слушатель кликов на меню
     menu.addEventListener( 'click', openMenu );
 };
 
 //Заполняем блок элементами базы данных
-function createMenu(parent, base, visible) {
+function createBranchMenu(parent, base, visible) {
     //Создаем обертку для пунктов меню
     const wrap = createDiv();
     wrap.classList.add(visible);
@@ -32,7 +30,7 @@ function createMenu(parent, base, visible) {
         //Если у элемента массива есть свой подмассив элементов, то наполняем пункт меню пунктами подменю,
         //рекурсивно вызывая эту же функцию.
         if (element.items) {
-            createMenu(newMenuItem, element, 'invis');
+            createBranchMenu(newMenuItem, element, 'invis');
 
         //Если элемент содержит ссылки на контент, то записываем их как дата-аттрибут.
         } else if (element.content) {
@@ -85,19 +83,17 @@ function openMenu(event) {
 };
 
 function checkIframe(content) {
-    //Каждые 100 миллисекунд проверяем фрейм.
-    //Когда поймаем ошибку - значит подгрузились данные со стороннего сервера и доступ к фрейму теперь закрыт.
+    //Каждые 100 миллисекунд проверяем фрейм. Когда во фрейм подгрузятся данные со стороннего сервера,
+    //доступ к внутренностям фрейма станет закрыт, поймаем ошибку, значит пора показать фрейм (до этого он пуст).
     const checkIframe = setInterval( () => {
         try {
-            console.log('try');
             return content.contentWindow.document;
         } catch {
-            console.log('Поймал ошибку');
             clearInterval(checkIframe); //Останавливаем setInterval.
             preloaderOutput.classList.add('invis'); //Скрываем преловдер.
             content.classList.remove('invis'); //Делаем фрейм видимым.
         };
-    }, 10 );
+    }, 100 );
 };
 
 function toHiglight(block) {
@@ -109,9 +105,6 @@ function toHiglight(block) {
     //Выделяем кликнутый пункт
     block.classList.toggle('active');
 };
-
-
-
 
 function createDiv() {
     const div = document.createElement('div');
