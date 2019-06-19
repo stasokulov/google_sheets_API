@@ -46,7 +46,8 @@ const source = [
         /*
         .catch((err) => alert(
             'Не удалось запросить или обработать данные. Сделайте скриншот и обратитесь к администратору. ' + err
-        ))*/;
+        ));
+        */
     });
 })();
 
@@ -113,8 +114,8 @@ function addItems(obj) {
 };
 
 function createResultBase() {
-    //Эта функция вызывается каждый раз после создания одной из баз, но должна сработать только после 
-    //создания всех баз. Поэтому роверяем, что все массивы items объектов в базе данных не пустые 
+    //Эта функция вызывается каждый раз после создания одной из баз, но должна сработать только после
+    //создания всех баз. Поэтому проверяем, что все массивы items объектов в source не пустые
     //(т.е. готовы к дальнейшей обработке). Если это не так, то останавливаемся.
     if( !source.every(element => element.items.length) ) {
         return;
@@ -134,22 +135,38 @@ function createResultBase() {
     //Потом проходимся по пунктам. При совпадении имени пункта в итоговой базе и библиотеке - наполняем
     //итоговую базу содержимым пункта библиотеки.
     //Перебираем сферы бизнеса.
-    resultBase.items.forEach(element => {
-        if( !element.items ) {
-            element.items = [{name: 'Нет данных'}];
+    resultBase.items.forEach(sphereOfBussines => {
+        //Проверка на заполненность второго столбца в конструкторе. Если он пуст, то подставляем массив-заглушку.
+        if( !sphereOfBussines.items ) {
+            sphereOfBussines.items = [{name: 'Нет данных'}];
         };
-
         //Перебираем продукты.
-        element.items.forEach(constrElement => {
-            //Перебираем библиотеку и сравниваем имена элементов с именем продукта итоговой базы.
-            library.items.forEach(libElement => {
-                if (libElement.name === constrElement.name) {
-                    //При совпадении - записываем массив нижележащих объектов из библиотеки в итоговую базу.
-                    constrElement.items = libElement.items;
-                }
-            })
+        sphereOfBussines.items.forEach(businessTo => {
+            businessTo.items.forEach(productInConstructor => {
+                /*
+                if(
+                    !library.items.some( productInLibrary => {
+                        return (productInLibrary.name === productInConstructor.name)
+                    })
+                ) {
+                    productInConstructor.items =  library.items.filter( (productInLibrary) => 
+                        productInLibrary.name === 'Нет данных'
+                    );
+                };
+                */
+
+                //Перебираем библиотеку и сравниваем имена элементов с именем продукта итоговой базы.
+                library.items.forEach(productInLibrary => {
+                    if (productInLibrary.name === productInConstructor.name) {
+                        //При совпадении - записываем массив нижележащих объектов из библиотеки в итоговую базу.
+                        productInConstructor.items = productInLibrary.items;
+                        //productInConstructor = productInLibrary;
+                    }
+                });
+            });
         });
     });
+
     //Прячем прелоадер.
     const preloaderMain = document.querySelector('.preloader__wrap_main');
     preloaderMain.classList.add('invis');
