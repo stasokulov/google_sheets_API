@@ -26,19 +26,15 @@ function createBranchMenu(parent, base, visible) {
     base.items.forEach(element => {
         let newMenuItem = templateMenuItem.cloneNode(true);
         newMenuItem.innerText = element.name;
+        //Если элемент содержит ссылки на контент, то записываем их как дата-аттрибут.
+        if (element.content) {
+            newMenuItem.dataset.content = element.content;
+        };
 
         //Если у элемента массива есть свой подмассив элементов, то наполняем пункт меню пунктами подменю,
         //рекурсивно вызывая эту же функцию.
         if (element.items) {
             createBranchMenu(newMenuItem, element, 'invis');
-
-        //Если элемент содержит ссылки на контент, то записываем их как дата-аттрибут.
-        } else if (element.content) {
-            const div = createDiv();
-            div.classList.add('invis');
-            div.classList.add('content');
-            div.dataset.content = element.content;
-            newMenuItem.appendChild(div);
         };
         wrap.appendChild(newMenuItem);
     });
@@ -63,15 +59,16 @@ function openMenu(event) {
         toHiglight(block);
         //Если есть подпункты в этом пункте
         if ( child.classList.contains('items') ) {
-        //Клонируем их, делаем видимыми и вставляем в блок для отображения
-        const subItems = child.cloneNode(true);
-        subItems.classList.remove('invis');
-        parent.lastElementChild.appendChild(subItems);
+            //Клонируем их, делаем видимыми и вставляем в блок для отображения
+            const subItems = child.cloneNode(true);
+            subItems.classList.remove('invis');
+            parent.lastElementChild.appendChild(subItems);
+        };
         //Если в пункте ссылки на контент, то создаем iframe и вставляем в правую часть навигатора.
-        } else if ( child.classList.contains('content') ) {
+        if ( block.dataset.content ) {
             const content = document.createElement('iframe');
             //Ссылку для фрейма берем из дата-атрибута. embedded=true убрает служебные слова.
-            content.setAttribute('src', child.dataset.content + '?embedded=true');
+            content.setAttribute('src', block.dataset.content + '?embedded=true');
             content.classList.add('frame');
             content.classList.add('invis'); //Невидимость уберем после прогрузки фрейма.
             content.setAttribute('frameborder', 0); //Этот аттрибут убирает некрасивую рамку вокруг iframe.
@@ -90,7 +87,7 @@ function checkIframe(content) {
             return content.contentWindow.document;
         } catch {
             clearInterval(checkIframe); //Останавливаем setInterval.
-            preloaderOutput.classList.add('invis'); //Скрываем преловдер.
+            preloaderOutput.classList.add('invis'); //Скрываем прелоадер.
             content.classList.remove('invis'); //Делаем фрейм видимым.
         };
     }, 100 );
