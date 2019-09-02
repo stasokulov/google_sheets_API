@@ -58,7 +58,7 @@ function openMenu(event) {
         //Выделяем кликнутый пункт
         toHiglight(block);
         //Если есть подпункты в этом пункте
-        if ( child.classList.contains('items') ) {
+        if ( child && child.classList.contains('items') ) {
             //Клонируем их, делаем видимыми и вставляем в блок для отображения
             const subItems = child.cloneNode(true);
             subItems.classList.remove('invis');
